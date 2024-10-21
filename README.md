@@ -1,4 +1,101 @@
-# `django-notifications` Documentation
+# Fork of `django-notifications` with some additional features
+
+## Requirements
+- Django >= 3.8 *
+- Python >= 3.8 *
+- djangorestframework >= 3.13
+- django-model-utils >= 3.1.0
+- jsonfield >= 2.1.0
+- pandas >= 2.2.0
+- requests >= 2.30
+
+
+Add `django_notifications_pro` app to INSTALLED_APPS in your django settings.py:
+```python
+INSTALLED_APPS = (
+    ...,
+    "django.contrib.staticfiles",
+    "rest_framework",  # required only if using the provided REST endpoints
+    'notifications',
+    'django_notifications_pro',
+     ...,
+)
+```
+
+
+## General ViewSets endpoints added (with custom serializer):
+- GET /api/notifications/ : Get all notifications for the current user
+- POST /api/notifications/read-all/ : Mark all notifications as read for the current user
+- GET /api/notifications/<int:pk>/ : Get a notification by id and mark it as read
+
+
+## Cron for deleting old notifications
+You can set up a cron job to delete old notifications automatically.
+
+This install is needed to enable cron job.
+```bash
+pip install django-notifications-pro[cron]
+service cron start
+python manage.py crontab add
+
+```
+
+Add the following to your settings.py :
+
+```python
+DJANGO_NOTIFICATIONS_CONFIG = {
+    'AUTO_DELETE_NOTIFICATIONS': True,
+    'NOTIFICATIONS_DELETE_DAYS': 30, # Number of days to keep notifications (default is 30)
+}
+
+CRONJOBS = [
+    ('0 0 * * *', 'notifications.cron.delete_old_notifications'), # Delete old notifications every day at midnight
+]
+```
+
+
+
+## Expo notifications
+You will be able to register devices, and each time a notification is sent, it will be delivered through Expo Go Notifications.
+
+
+This install is needed to enable expo notifications.
+```bash
+pip install django-notifications-pro[expo]
+```
+
+Add the following to your settings.py :
+
+```python
+DJANGO_NOTIFICATIONS_VIEWS = {
+    'USE_EXPO_NOTIFICATIONS': True, # Set to True to enable expo notifications
+    'EXPO_APP_ID': '<your-expo-app-id>', 
+}
+```
+
+Then run the migrations:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+##  Urls
+ ### Expo Notifications
+- POST /api/expo-devices/register-device/ : Register a device to receive expo notifications
+- POST /api/expo-devices/unregister-device/ : Unregister a device to stop receiving expo notifications
+
+
+## Contributing
+
+-   [Juan Ignacio Borrelli](https://www.linkedin.com/in/juan-ignacio-borrelli/)
+    
+
+Maintained and developed by [Linkchar Software Development](https://linkchar.com/).
+
+
+
+
+# Original `django-notifications` Documentation
 
 [![build-status](https://travis-ci.org/django-notifications/django-notifications.svg)](https://travis-ci.org/django-notifications/django-notifications)
 [![Coverage Status](https://coveralls.io/repos/github/django-notifications/django-notifications/badge.svg?branch=master)](https://coveralls.io/github/django-notifications/django-notifications?branch=master)

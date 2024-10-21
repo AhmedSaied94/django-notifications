@@ -18,27 +18,25 @@ with open('notifications/__init__.py', 'rb') as f:
 
 
 setup(
-    name='django-notifications-hq',
+    name='django-notifications-pro',
     version=version,
-    description='GitHub notifications alike app for Django.',
+    description='GitHub notifications alike app for Django with expo push notifications',
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    author='django-notifications team',
-    author_email='yang@yangyubo.com',
-    url='http://github.com/django-notifications/django-notifications',
+    url='https://github.com/nachoborrelli/django-notifications',
     install_requires=[
         'django>=3.2',
         'django-model-utils>=3.1.0',
         'jsonfield>=2.1.0',
         'pytz',
-        'swapper'
+        'swapper',
+        'pandas>=2.2.0',
+        'requests>=2.30',
     ],
-    test_requires=[
-        'django>=3.2',
-        'django-model-utils>=3.1.0',
-        'jsonfield>=2.1.0',
-        'pytz'
-    ],
+    extras_require={
+        'expo': ['exponent-server-sdk~=2.0.0'],
+        'crontab': ['django_crontab~=0.7.1'],
+    },
     packages=[
         'notifications',
         'notifications.base',
@@ -68,6 +66,6 @@ setup(
         'Programming Language :: Python :: 3.11',
         'Topic :: Utilities'
     ],
-    keywords='django notifications github action event stream',
+    keywords='django notifications github action event stream expo push viewset cron crontab',
     license='MIT',
 )

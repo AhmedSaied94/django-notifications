@@ -3,6 +3,9 @@
 from distutils.version import StrictVersion  # pylint: disable=no-name-in-module,import-error
 
 from django import get_version
+from notifications.views import NotificationsViewSet
+from notifications.app_settings import api_settings as settings
+
 
 from . import views
 
@@ -24,5 +27,15 @@ urlpatterns = [
     pattern(r'^api/unread_list/$', views.live_unread_notification_list, name='live_unread_notification_list'),
     pattern(r'^api/all_list/', views.live_all_notification_list, name='live_all_notification_list'),
 ]
+from rest_framework.routers import DefaultRouter
+
+
+router = DefaultRouter()
+router.register(r"notifications", NotificationsViewSet, basename="notifications")
+
+if settings.get_user_setting("USE_EXPO_NOTIFICATIONS"):
+    from notifications.views import ManageDeviceExpo
+    router.register(r"expo-devices", ManageDeviceExpo, basename="expo")
+
 
 app_name = 'notifications'
