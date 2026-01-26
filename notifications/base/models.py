@@ -20,6 +20,8 @@ from notifications.signals import notify
 from notifications.utils import id2slug
 from swapper import load_model
 
+from copy import deepcopy
+
 if Version(get_version()) >= Version('1.8.0'):
     from django.contrib.contenttypes.fields import GenericForeignKey  # noqa
 else:
@@ -358,11 +360,13 @@ def notify_handler(verb, **kwargs):
                         ContentType.objects.get_for_model(obj, for_concrete_model=for_concrete_model))
 
         if kwargs and EXTRA_DATA:
+            # deep copy kwargs to avoid poping the keys from the original dictionary
+            kwargs_copy = deepcopy(kwargs)
             # set kwargs as model column if available
             for key in list(kwargs.keys()):
                 if hasattr(newnotify, key):
-                    setattr(newnotify, key, kwargs.pop(key))
-            newnotify.data = kwargs
+                    setattr(newnotify, key, kwargs_copy.pop(key))
+            newnotify.data = kwargs_copy
 
         newnotify.save()
         new_notifications.append(newnotify)
